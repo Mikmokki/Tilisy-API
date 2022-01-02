@@ -6,8 +6,6 @@ const main = async () => {
 
     const BASE_URL = "https://api.tilisy.com"
     const REDIRECT_URL = config.redirectUrl
-    const BANK_NAME = "Nordea"
-    const BANK_COUNTRY = "FI"
     const JWT = getJWT()
     const baseHeaders = {
         Authorization: `Bearer ${JWT}`,
@@ -16,10 +14,22 @@ const main = async () => {
     const aspspsResponse = await fetch(`${BASE_URL}/aspsps`, {
         headers: baseHeaders
     })
-    // If you want you can override BANK_NAME and BANK_COUNTRY with any bank from this list
     const aspspsData = await aspspsResponse.json()
-    console.log(`ASPSPS data`, aspspsData.aspsps)
+    const aspspsDataWithId = aspspsData.aspsps.map((a, i) => ({ ...a, id: i + 1 }))
 
+    console.log(`ASPSPS data `, aspspsDataWithId)
+
+    let bankInput = await input('Select a bank from the list above by writing the id of the bank: ')
+    let selectedBank = aspspsDataWithId.find(bank => bank.id === Number(bankInput))
+    while (!selectedBank) {
+        console.log("Wrong id, try again")
+        bankInput = await input('Select a bank from the list above by writing the id of the bank: ')
+        selectedBank = aspspsDataWithId.find(bank => bank.id === Number(bankInput))
+    }
+    const BANK_NAME = selectedBank.name
+    const BANK_COUNTRY = selectedBank.country
+
+    console.log(`Bank ${BANK_NAME} selected.`)
     // 10 days ahead
     const validUntil = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000);
     const startAuthorizationBody = {
