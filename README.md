@@ -4,7 +4,7 @@ Code samples for using https://api.tilisy.com
 
 ## Prerequisites   
 
-In order to be able to use these samples you need to:
+In order to be able to use this sample you need to:
 
 1. Create a developer account at https://enablebanking.com/tilisy-api/#get-started
 
