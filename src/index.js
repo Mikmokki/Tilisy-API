@@ -57,19 +57,38 @@ const main = async () => {
         headers: baseHeaders
     })
     const sessionData = await sessionResponse.json()
-    console.log(sessionData, "sD")
 
-    const accountId = sessionData.accounts[0]
-    console.log(accountId, "aID")
-    const accountBalancesResponse = await fetch(`${BASE_URL}/accounts/${accountId}/balances`, {
-        headers: baseHeaders
+    const accounts = sessionData.accounts
+    console.log("All accounts", sessionData.accounts)
+    const accountTransactionsResponse = async (accountId) => {
+        const response = await fetch(`${BASE_URL}/accounts/${accountId}/transactions`, {
+            headers: baseHeaders
+        })
+        const res = await response.json()
+        return { accountId, transactions: res.transactions }
+    }
+    const transactionsByAccountId = await Promise.all(accounts.map(async (accountId) => await accountTransactionsResponse(accountId)))
+    console.log("Transaction info by account id.")
+    transactionsByAccountId.forEach(account => {
+        const transactions = account.transactions
+        const debits = transactions.filter(tr => tr.credit_debit_indicator === "DBIT").map(tr => Number(tr.transaction_amount.amount))
+        const credits = transactions.filter(tr => tr.credit_debit_indicator === "CRDT").map(tr => Number(tr.transaction_amount.amount))
+        console.log(`Summary about account id ${account.accountId}.`)
+        console.log(`Account has ${transactions.length} transactions.`)
+        console.log("The total values of all inbound (credit) and outbound (debit) transactions.")
+        console.log(`Debit: ${debits.reduce((prev, current) => {
+            return (prev + current)
+        }, 0).toFixed(2)}.`)
+        console.log(`Credit: ${credits.reduce((prev, current) => {
+            return (prev + current)
+        }, 0).toFixed(2)}.`)
+        console.log(`The biggest debit amount: ${debits.reduce((prev, current) => {
+            return (prev > current) ? prev : current
+        }, 0).toFixed(2)}.`)
+        console.log(`The biggest credit amount: ${credits.reduce((prev, current) => {
+            return (prev > current) ? prev : current
+        }, 0).toFixed(2)}.\n`)
     })
-    console.log(`Account balances data:`, await accountBalancesResponse.json())
-
-    const accountTransactionsResponse = await fetch(`${BASE_URL}/accounts/${accountId}/transactions`, {
-        headers: baseHeaders
-    })
-    console.log(`Account transactions data:`, await accountTransactionsResponse.json())
 }
 
 (async () => {
