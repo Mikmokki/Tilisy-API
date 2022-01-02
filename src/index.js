@@ -79,8 +79,9 @@ const main = async () => {
     }
     const transactionsByAccountId = await Promise.all(accounts.map(async (accountId) => await accountTransactionsResponse(accountId)))
     console.log("Transaction info by account id.")
+    const timeThirtyDaysAgo = new Date().setDate((new Date).getDate() - 30)
     transactionsByAccountId.forEach(account => {
-        const transactions = account.transactions
+        const transactions = account.transactions.filter(t => timeThirtyDaysAgo < new Date(t.transaction_date))
         const debits = transactions.filter(tr => tr.credit_debit_indicator === "DBIT").map(tr => Number(tr.transaction_amount.amount))
         const credits = transactions.filter(tr => tr.credit_debit_indicator === "CRDT").map(tr => Number(tr.transaction_amount.amount))
         console.log(`Summary about account id ${account.accountId}.`)
