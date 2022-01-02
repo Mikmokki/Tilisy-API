@@ -3,7 +3,6 @@ const { getJWT, config, input, getCode } = require("./utils")
 const fetch = require('node-fetch');
 const main = async () => {
 
-
     const BASE_URL = "https://api.tilisy.com"
     const REDIRECT_URL = config.redirectUrl
     const JWT = getJWT()
@@ -29,7 +28,7 @@ const main = async () => {
     const BANK_NAME = selectedBank.name
     const BANK_COUNTRY = selectedBank.country
 
-    console.log(`Bank ${BANK_NAME} selected.`)
+    console.log(`Bank ${BANK_NAME} (${BANK_COUNTRY}) selected.`)
     // 10 days ahead
     const validUntil = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000);
     const startAuthorizationBody = {
@@ -60,7 +59,6 @@ const main = async () => {
         body: JSON.stringify(createSessionBody)
     })
     const createSessionData = await createSessionResponse.json()
-    console.log(createSessionData, "cSD")
     const sessionId = createSessionData.session_id
 
     const sessionResponse = await fetch(`${BASE_URL}/sessions/${sessionId}`, {
@@ -93,10 +91,10 @@ const main = async () => {
         console.log(`Credit: ${credits.reduce((prev, current) => {
             return (prev + current)
         }, 0).toFixed(2)}.`)
-        console.log(`The biggest debit amount: ${debits.reduce((prev, current) => {
+        console.log(`The biggest debit transaction amount: ${debits.reduce((prev, current) => {
             return (prev > current) ? prev : current
         }, 0).toFixed(2)}.`)
-        console.log(`The biggest credit amount: ${credits.reduce((prev, current) => {
+        console.log(`The biggest credit transaction amount: ${credits.reduce((prev, current) => {
             return (prev > current) ? prev : current
         }, 0).toFixed(2)}.\n`)
     })

@@ -1,5 +1,5 @@
 {
-    "keyPath": "../jwtRS256.key",
+    "keyPath": "jwtRS256.key",
     "applicationId": "27cae2ad-0cd9-475f-8d84-66af9af41cb7",
     "redirectUrl": "http://localhost:8080/auth_redirect"
 }
