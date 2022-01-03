@@ -82,7 +82,7 @@ const main = async () => {
         const transactions = account.transactions.filter(t => timeThirtyDaysAgo < new Date(t.transaction_date))
         const debits = transactions.filter(tr => tr.credit_debit_indicator === "DBIT").map(tr => Number(tr.transaction_amount.amount))
         const credits = transactions.filter(tr => tr.credit_debit_indicator === "CRDT").map(tr => Number(tr.transaction_amount.amount))
-        console.log(`Summary about account id ${account.accountId}.`)
+        console.log(`Summary about account id ${account.accountId} during the last 30 days.`)
         console.log(`Account has ${transactions.length} transactions.`)
         console.log("The total values of all inbound (credit) and outbound (debit) transactions.")
         console.log(`Debit: ${debits.reduce((prev, current) => {
